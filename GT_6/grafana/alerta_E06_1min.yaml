@@ -1,0 +1,99 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: E06_1min
+      folder: E06
+      interval: 1m
+      rules:
+        - uid: dg34eg5z44h6od
+          title: '[E06] Obstáculo cercano — P26'
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: dfuiwmzpdasjkb
+              model:
+                intervalMs: 1000
+                maxDataPoints: 43200
+                query: |4
+                    from(bucket: "mediciones")
+                      |> range(start: -5m)
+                      |> filter(fn: (r) =>
+                        r._measurement == "mediciones"
+                      )
+                      |> filter(fn: (r) =>
+                        r.equipo == "E06" and
+                        r.proyecto == "P26" and
+                        r.nodo == "Baston_E06"
+                      )
+                      |> filter(fn: (r) =>
+                        r._field == "distancia_cm"
+                      )
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 20
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 2m
+          annotations: {}
+          labels:
+            equipo: E06
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email

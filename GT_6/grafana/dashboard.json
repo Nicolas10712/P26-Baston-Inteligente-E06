@@ -1,0 +1,302 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 41,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "dfuiwmzpdasjkb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "suffix:cm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "dfuiwmzpdasjkb"
+          },
+          "query": "\nfrom(bucket: \"mediciones\")\n  |> range(\n    start: v.timeRangeStart,\n    stop: v.timeRangeStop\n  )\n  |> filter(fn: (r) =>\n    r._measurement == \"mediciones\"\n  )\n  |> filter(fn: (r) =>\n    r.equipo == \"E06\" and\n    r.proyecto == \"P26\" and\n    r.nodo == \"Baston_E06\"\n  )\n  |> filter(fn: (r) =>\n    r._field == \"distancia_cm\"\n  )\n  |> aggregateWindow(\n    every: v.windowPeriod,\n    fn: mean,\n    createEmpty: false\n  )\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Distancia detectada — Bastón P26",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "dfuiwmzpdasjkb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 20
+              }
+            ]
+          },
+          "unit": "suffix:cm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "dfuiwmzpdasjkb"
+          },
+          "query": "\nfrom(bucket: \"mediciones\")\n  |> range(\n    start: v.timeRangeStart,\n    stop: v.timeRangeStop\n  )\n  |> filter(fn: (r) =>\n    r._measurement == \"mediciones\"\n  )\n  |> filter(fn: (r) =>\n    r.equipo == \"E06\" and\n    r.proyecto == \"P26\" and\n    r.nodo == \"Baston_E06\"\n  )\n  |> filter(fn: (r) =>\n    r._field == \"distancia_cm\"\n  )\n  |> last()\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Última distancia registrada",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "dfuiwmzpdasjkb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": 30000,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "displayName": "Estado del bastón",
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "LIBRE"
+                },
+                "1": {
+                  "color": "blue",
+                  "index": 1,
+                  "text": "OBSTACULO_LEJOS"
+                },
+                "2": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "OBSTACULO_CERCA"
+                },
+                "3": {
+                  "color": "dark-red",
+                  "index": 3,
+                  "text": "ERROR_SENSOR"
+                },
+                "4": {
+                  "color": "purple",
+                  "index": 4,
+                  "text": "ACTUANDO_REMOTO"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "dfuiwmzpdasjkb"
+          },
+          "query": "\nfrom(bucket: \"mediciones\")\n  |> range(\n    start: v.timeRangeStart,\n    stop: v.timeRangeStop\n  )\n  |> filter(fn: (r) =>\n    r._measurement == \"mediciones\"\n  )\n  |> filter(fn: (r) =>\n    r.equipo == \"E06\" and\n    r.proyecto == \"P26\" and\n    r.nodo == \"Baston_E06\"\n  )\n  |> filter(fn: (r) =>\n    r._field == \"estado_num\"\n  )\n  |> aggregateWindow(\n    every: 20s,\n    fn: last,\n    createEmpty: false\n  )\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Historial de estados FSM — Bastón P26",
+      "type": "state-timeline"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "[E06] Bastón Inteligente P26",
+  "uid": "dg2oz10usirk0c",
+  "version": 17,
+  "weekStart": ""
+}

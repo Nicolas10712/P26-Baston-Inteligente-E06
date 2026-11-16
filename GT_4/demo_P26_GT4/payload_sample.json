@@ -1,0 +1,8 @@
+{
+  "estado": "LIBRE",
+  "sensor_ok": 1,
+  "distancia_cm": 156.4,
+  "rssi_dbm": -42,
+  "gps_fix": 0,
+  "gps_sats": 0
+}

@@ -1,0 +1,201 @@
+[
+  {
+    "id": "15452b58949459b7",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "0ed4209b89113d7e",
+    "type": "mqtt in",
+    "z": "15452b58949459b7",
+    "name": "Datos Bastón P26",
+    "topic": "curso/E06/P26/Baston_E06",
+    "qos": "1",
+    "datatype": "utf8",
+    "broker": "13dc58f52a6f28cb",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 160,
+    "wires": [
+      [
+        "d38b6b598e29eef1"
+      ]
+    ]
+  },
+  {
+    "id": "d38b6b598e29eef1",
+    "type": "json",
+    "z": "15452b58949459b7",
+    "name": "Convertir JSON",
+    "property": "payload",
+    "action": "obj",
+    "pretty": false,
+    "x": 380,
+    "y": 160,
+    "wires": [
+      [
+        "a162a35a1488b31b"
+      ]
+    ]
+  },
+  {
+    "id": "a162a35a1488b31b",
+    "type": "debug",
+    "z": "15452b58949459b7",
+    "name": "Datos recibidos P26",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 600,
+    "y": 160,
+    "wires": []
+  },
+  {
+    "id": "70575a4f2b6370d9",
+    "type": "inject",
+    "z": "15452b58949459b7",
+    "name": "ON",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "ON",
+    "payloadType": "str",
+    "x": 130,
+    "y": 280,
+    "wires": [
+      [
+        "5dc7288c9aaa2b74"
+      ]
+    ]
+  },
+  {
+    "id": "5dc7288c9aaa2b74",
+    "type": "function",
+    "z": "15452b58949459b7",
+    "name": "Armar comando P26",
+    "func": "\nconst accion = msg.payload;\n\nif (accion !== \"ON\" && accion !== \"OFF\") {\n    return null;\n}\n\nmsg.topic = \"curso/E06/P26/Baston_E06/cmd\";\nmsg.payload = { cmd: accion };\nmsg.qos = 1;\nmsg.retain = false;\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 360,
+    "y": 320,
+    "wires": [
+      [
+        "89f17e9b951c5d5e",
+        "412ac3b2b3f0a55c"
+      ]
+    ]
+  },
+  {
+    "id": "412ac3b2b3f0a55c",
+    "type": "mqtt out",
+    "z": "15452b58949459b7",
+    "name": "Comandos Bastón P26",
+    "topic": "curso/E06/P26/Baston_E06/cmd",
+    "qos": "1",
+    "retain": "false",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "13dc58f52a6f28cb",
+    "x": 870,
+    "y": 320,
+    "wires": []
+  },
+  {
+    "id": "704db1462656a630",
+    "type": "inject",
+    "z": "15452b58949459b7",
+    "name": "OFF",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "OFF",
+    "payloadType": "str",
+    "x": 130,
+    "y": 360,
+    "wires": [
+      [
+        "5dc7288c9aaa2b74"
+      ]
+    ]
+  },
+  {
+    "id": "89f17e9b951c5d5e",
+    "type": "debug",
+    "z": "15452b58949459b7",
+    "name": "Prueba comandos P26",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 600,
+    "y": 320,
+    "wires": []
+  },
+  {
+    "id": "13dc58f52a6f28cb",
+    "type": "mqtt-broker",
+    "name": "Broker_E06",
+    "broker": "10.0.0.10",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  }
+]
