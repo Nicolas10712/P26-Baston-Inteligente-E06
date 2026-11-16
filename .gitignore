@@ -1,0 +1,22 @@
+# Claves y configuración local (conservar config.example.h)
+config.h
+**/config.h
+.env
+.env.*
+!.env.example
+**/credentials.json
+**/flows_cred.json
+secrets.json
+
+# Archivos generados / locales
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+*.bak
+*.tmp
+*.bin
+*.elf
+*.map
+build/
