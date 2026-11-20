@@ -1,75 +1,131 @@
 # P26 — Bastón Inteligente | Equipo E06
 
-Proyecto de **Fundamentos de IoT** de la Universidad Autónoma de Chile. Prototipo educativo de bastón de asistencia que utiliza un **ESP32** y un sensor ultrasónico **HC-SR04** para detectar obstáculos, generar avisos locales y transmitir telemetría mediante MQTT. El proyecto incorpora flujos de **Node-RED**, persistencia en **InfluxDB** y visualización en **Grafana**.
+**Proyecto de Fundamentos de IoT — Universidad Autónoma de Chile.** Prototipo académico de asistencia que utiliza ESP32 y HC-SR04 para detectar obstáculos, activar avisos locales y transmitir datos mediante MQTT. Incorpora control remoto desde Node-RED, almacenamiento en InfluxDB, visualización en Grafana y módulo GPS.
 
-> **Alcance:** prototipo académico en evaluación. No está certificado ni sustituye un bastón blanco, un perro guía u otra ayuda de movilidad. El HC-SR04 tiene limitaciones de cobertura, superficie y ángulo de reflexión.
+> **Versión de referencia:** [`Entrega_Final/demo_P26_GT6_ERROR_BOTON_3S_GPIO22.ino`](Entrega_Final/demo_P26_GT6_ERROR_BOTON_3S_GPIO22.ino). Los archivos de `GT_1` a `GT_6` documentan etapas anteriores del desarrollo, no el firmware definitivo.
 
-## Implementación actual
+## Prototipo físico
 
-El archivo de referencia para la versión de **seis estados** es [`Entrega_Final/demo_P26_GT6_SIN_ECO_EXPERIMENTAL.ino`](Entrega_Final/demo_P26_GT6_SIN_ECO_EXPERIMENTAL.ino). Se conserva su nombre para identificar la versión efectivamente archivada. El firmware de cinco estados disponible en `GT_6/firmware/` corresponde a una etapa previa, no a la versión de seis estados.
+**Vista general del montaje**
 
-| Código | Estado | Descripción |
-|---:|---|---|
-| 0 | `LIBRE` | Distancia válida compatible con camino libre según los umbrales |
-| 1 | `OBSTACULO_LEJOS` | Obstáculo intermedio, aviso local |
-| 2 | `OBSTACULO_CERCA` | Obstáculo cercano, aviso prioritario |
-| 3 | `ERROR_SENSOR` | Condición de falla identificada, con recuperación controlada |
-| 4 | `ACTUANDO_REMOTO` | Indicador remoto activado por comando MQTT, sujeto a condiciones seguras |
-| 5 | `SIN_ECO` | Sin medición ultrasónica confiable; no implica necesariamente sensor averiado |
+![Vista general del bastón P26 con caja electrónica y sensor ultrasónico](Entrega_Final/img/Montaje_real_vertical.jpg)
 
-Los umbrales del firmware de seis estados son **20/25 cm** (entrada/salida de CERCA) y **50/60 cm** (entrada/salida de LEJOS). La lógica remota admite `ON` únicamente desde `LIBRE` con una lectura válida y segura; `OFF`, el temporizador de 60 segundos o una condición local prioritaria cancelan la actuación remota.
+**Disposición del sensor HC-SR04 y la caja de control**
 
-## Hardware y pines declarados en el firmware
+![Montaje horizontal del bastón P26](Entrega_Final/img/Montaje_real_horizontal.jpg)
 
-| Dispositivo / señal | GPIO ESP32 |
-|---|---:|
-| HC-SR04 TRIG | 26 |
-| HC-SR04 ECHO | 25 |
-| LED local | 27 |
-| Zumbador | 32 |
-| Salida de control del motor de vibración | 33 |
-| Botón de rearme | 14 |
-| LED remoto | 23 |
-| GPS UART RX / TX | 16 / 17 |
+## Arquitectura IoT
 
-**Precauciones:** ECHO del HC-SR04 debe estar acondicionado a los niveles de 3,3 V del ESP32. El motor requiere una etapa de potencia y protección adecuadas; no debe conectarse directamente a un GPIO. La asignación de pines refleja el código, no equivale a certificar el montaje físico.
+El **ESP32** recibe las mediciones del **HC-SR04** y ejecuta una máquina de estados finitos (FSM) de seis estados. Según la distancia y las condiciones del sistema, controla el LED de advertencia, el buzzer y el motor de vibración. El módulo GPS incorpora posicionamiento. La telemetría se transmite por **MQTT** para supervisión desde **Node-RED**, almacenamiento en **InfluxDB** y consulta en **Grafana**.
 
-## Software y comunicaciones
+El control remoto desde Node-RED permite encender o apagar el **LED amarillo conectado a GPIO22**, siempre sujeto a las condiciones de prioridad y seguridad programadas en la FSM.
 
-- **Firmware:** Arduino IDE o herramienta compatible con ESP32; bibliotecas `PubSubClient`, `ArduinoJson` y `TinyGPSPlus`, además de las bibliotecas del núcleo ESP32.
-- **MQTT:** telemetría en `curso/E06/P26/Baston_E06` y comandos en `curso/E06/P26/Baston_E06/cmd`.
-- **Control remoto:** payload JSON `{"cmd":"ON"}` o `{"cmd":"OFF"}`. Para solicitar recuperación de `ERROR_SENSOR`, el firmware también reconoce `{"comando":"reset"}` bajo las condiciones programadas.
-- **Node-RED:** el flujo básico archivado está en [`GT_6/nodered/flujo.json`](GT_6/nodered/flujo.json). Incluye recepción de telemetría y comandos ON/OFF; **no incluye la exportación posterior del Dashboard 2.0**.
-- **Grafana:** el dashboard archivado está en [`GT_6/grafana/dashboard.json`](GT_6/grafana/dashboard.json). Esta exportación representa la etapa previa y sus etiquetas de estados contemplan 0–4; queda por incorporar la etiqueta del estado 5.
-- **InfluxDB:** consultas Flux del trabajo GT5 en [`GT_5/`](GT_5/).
+### Estados de funcionamiento
 
-### Configuración local del firmware
+| `estado_num` | Estado | Función |
+| ---: | --- | --- |
+| 0 | `LIBRE` | Medición válida, sin aviso de obstáculo prioritario |
+| 1 | `OBSTACULO_LEJOS` | Aviso de obstáculo a distancia intermedia |
+| 2 | `OBSTACULO_CERCA` | Aviso prioritario de obstáculo próximo |
+| 3 | `ERROR_SENSOR` | Estado de error con bloqueo y rearme controlado |
+| 4 | `ACTUANDO_REMOTO` | LED remoto activo mediante comando MQTT autorizado |
+| 5 | `SIN_ECO` | No hay lectura ultrasónica confiable; no se supone automáticamente una avería |
 
-1. Copiar [`Entrega_Final/config.example.h`](Entrega_Final/config.example.h) como `config.h` en la **misma carpeta** que el `.ino` que se compilará.
-2. Completar localmente Wi-Fi, host y credenciales MQTT.
-3. Abrir el `.ino` con Arduino IDE, instalar las bibliotecas necesarias y seleccionar la placa ESP32 adecuada.
-4. Compilar y cargar en el ESP32. Las pruebas físicas deben realizarse con el circuito conectado de manera segura.
+**Histéresis:** CERCA utiliza los límites 20/25 cm y LEJOS los límites 50/60 cm para reducir oscilaciones de estado. La pérdida persistente de eco conduce a `SIN_ECO`. Una condición de ECHO alto persistente está contemplada como posible falla en el firmware.
 
-El archivo `config.h` contiene credenciales personales y **no debe subirse a GitHub**. El repositorio solo debe conservar `config.example.h`, con valores de ejemplo.
+### Diagnóstico y rearme mediante GPIO14
 
-## Organización del repositorio
+- **Pulsación larga de 3 segundos**, con lectura válida: activa una **simulación diagnóstica** de `ERROR_SENSOR`.
+- El estado `ERROR_SENSOR` permanece bloqueado aunque se vuelvan a obtener mediciones válidas.
+- Tras **tres ecos válidos consecutivos**, una **nueva pulsación corta** de GPIO14 permite el rearme hacia `LIBRE`, `OBSTACULO_LEJOS` o `OBSTACULO_CERCA`, según la distancia.
+- La pulsación larga que activó la prueba **no** realiza el rearme por sí sola.
 
-| Carpeta | Contenido |
-|---|---|
-| [`GT_1/`](GT_1/) | Ejercicio de sensado y calibración, documentación y material Wokwi |
-| [`GT_2/`](GT_2/) | Resultados y grafo de la etapa inicial |
-| [`GT_3/`](GT_3/) | Informe técnico del HC-SR04 y máquina de estados |
-| [`GT_4/`](GT_4/) | Integración MQTT y firmware de esa etapa |
-| [`GT_5/`](GT_5/) | Esquema de ingesta y consultas Flux |
-| [`GT_6/`](GT_6/) | Firmware histórico, exportaciones, datos y capturas |
-| [`Entrega_Final/`](Entrega_Final/) | Firmware experimental de seis estados y plantilla de configuración sin claves |
+**Distinción técnica:** esta simulación permite validar el comportamiento de la FSM y el botón físico. **No equivale a haber demostrado una desconexión eléctrica detectada automáticamente**; esa prueba específica permanece pendiente.
 
-## Verificaciones y límites de la evidencia
+## Hardware y conexiones
 
-En pruebas del prototipo se han observado los estados locales `LIBRE`, `OBSTACULO_LEJOS` y `OBSTACULO_CERCA`, la recepción de órdenes MQTT para el LED remoto y su cancelación por obstáculo o temporizador. Se dispone de una versión experimental que diferencia `SIN_ECO` de `ERROR_SENSOR`.
+| Señal / componente | GPIO ESP32 |
+| --- | ---: |
+| HC-SR04 — TRIG | 26 |
+| HC-SR04 — ECHO | 25 |
+| LED principal de advertencia | 27 |
+| Buzzer | 32 |
+| Motor de vibración (salida a etapa de potencia) | 33 |
+| Botón de diagnóstico y rearme | 14 |
+| **LED amarillo remoto** | **22** |
+| GPS UART2 RX / TX | 16 / 17 |
 
-**Aspectos aún no acreditados completamente por este repositorio:** recuperación física controlada de `ERROR_SENSOR`, posicionamiento GPS con `FIX` válido y cierre del ensayo experimental de sigma de GT1. El dashboard interactivo más reciente de Node-RED requiere una nueva exportación para poder reproducirse desde GitHub. No se presentan esas pruebas como resultados concluidos.
+La señal ECHO del HC-SR04 utiliza adaptación de nivel hacia el ESP32. El motor se controla mediante una etapa de potencia; no se conecta directamente al GPIO. En la versión final se conserva el control digital del motor, **no PWM experimental**.
 
-## Uso académico
+## Plataforma IoT y evidencias
 
-Material desarrollado para el proyecto P26, equipo E06. Los resultados se refieren al prototipo y a las condiciones de ensayo documentadas, no a un dispositivo de seguridad certificado.
+### Node-RED
+
+Recepción y visualización de datos MQTT, interpretación de los estados de la FSM y botones para el control remoto.
+
+![Flujo de Node-RED del bastón P26](Entrega_Final/img/Captura_NodeRed.png)
+
+[Descargar configuración final de Node-RED](Entrega_Final/flujo_P26_final.json)
+
+### Grafana
+
+Dashboard con **cuatro paneles**: distancia detectada, última distancia registrada, historial de estados FSM e indicador de LED remoto.
+
+![Dashboard de Grafana del P26](Entrega_Final/img/Captura_Grafana.png)
+
+[Descargar dashboard final de Grafana](Entrega_Final/dashboard_P26_final.json)
+
+### Tópicos MQTT
+
+| Uso | Tópico |
+| --- | --- |
+| Telemetría | `curso/E06/P26/Baston_E06` |
+| Comandos | `curso/E06/P26/Baston_E06/cmd` |
+
+Comandos para el LED remoto: `{"cmd":"ON"}` y `{"cmd":"OFF"}`. El firmware también contempla `{"comando":"reset"}` para el rearme de `ERROR_SENSOR` en las condiciones programadas.
+
+## Resultados y validaciones
+
+| Función | Estado |
+| --- | --- |
+| Detección de obstáculos: LIBRE, LEJOS y CERCA | **Validada** |
+| Estado SIN_ECO | **Validado** |
+| Diagnóstico simulado de ERROR_SENSOR mediante GPIO14 | **Validado** |
+| Rearme mediante GPIO14 hacia los tres estados de distancia | **Validado** |
+| LED amarillo remoto GPIO22 mediante Node-RED | **Validado** |
+| Comunicación MQTT | **Validada** |
+| Node-RED y Grafana | **Validados** |
+| GPS | **Validado** |
+| Detección física automática de una avería eléctrica real | **Pendiente de validación** |
+
+- [Informe de validaciones (PDF)](Entrega_Final/Informe_Validaciones_P26_E06.pdf)
+- [Matriz de validaciones](Entrega_Final/VALIDACIONES.md)
+- [Grafo FSM de seis estados](Entrega_Final/Grafo_FSM_P26_6_Estados.pdf)
+
+## Entrega final y organización del repositorio
+
+| Ruta | Contenido |
+| --- | --- |
+| [`Entrega_Final/`](Entrega_Final/) | Firmware final, JSON actuales, informe, matriz y fotografías |
+| [`GT_1/`](GT_1/) | Material de la primera etapa |
+| [`GT_2/`](GT_2/) | Ensayos y grafo inicial |
+| [`GT_3/`](GT_3/) | Informe técnico y FSM inicial |
+| [`GT_4/`](GT_4/) | Desarrollo de conectividad MQTT |
+| [`GT_5/`](GT_5/) | Integración de datos y consultas |
+| [`GT_6/`](GT_6/) | Entrega histórica de integración IoT |
+
+Los documentos y códigos de GT1–GT6 se conservan para mostrar la evolución del proyecto. **Para reproducir la versión actual debe utilizarse el `.ino` identificado como firmware final**, no el experimental anterior.
+
+## Compilación y configuración
+
+1. Abrir [`demo_P26_GT6_ERROR_BOTON_3S_GPIO22.ino`](Entrega_Final/demo_P26_GT6_ERROR_BOTON_3S_GPIO22.ino) en **Arduino IDE** con placa **ESP32 Dev Module**.
+2. Copiar [`config.example.h`](Entrega_Final/config.example.h) como `config.h` **en la misma carpeta local del sketch**, y completar los datos de Wi-Fi y MQTT.
+3. Contar con las bibliotecas `PubSubClient`, `ArduinoJson` y `TinyGPSPlus`, además del núcleo ESP32.
+4. Compilar y cargar. Durante las pruebas se utilizó **115200 baudios** para carga y Monitor Serie.
+5. Al importar las configuraciones de Node-RED y Grafana en otro entorno, ajustar conexiones MQTT y fuentes de datos.
+
+**Seguridad:** nunca subir a GitHub el archivo privado `config.h`, contraseñas, tokens ni claves.
+
+## Alcance
+
+Este sistema es un **prototipo académico** y no constituye un dispositivo certificado de movilidad ni reemplaza otras ayudas de desplazamiento. Su desempeño depende, entre otros factores, de la geometría, reflectancia y cobertura del sensor ultrasónico.
