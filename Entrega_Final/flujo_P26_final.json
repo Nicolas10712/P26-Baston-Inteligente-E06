@@ -1,0 +1,553 @@
+[
+  {
+    "id": "15452b58949459b7",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "13dc58f52a6f28cb",
+    "type": "mqtt-broker",
+    "name": "Broker_E06",
+    "broker": "mosquitto",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "b7ae4348854fbe07",
+    "type": "mqtt-broker",
+    "name": "",
+    "broker": "mosquitto",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "af7179018e88fd23",
+    "type": "ui-base",
+    "name": "My Dashboard",
+    "path": "/dashboard",
+    "appIcon": "",
+    "includeClientData": true,
+    "acceptsClientConfig": [
+      "ui-notification",
+      "ui-control"
+    ],
+    "showPathInSidebar": false,
+    "headerContent": "page",
+    "navigationStyle": "default",
+    "titleBarStyle": "default",
+    "showReconnectNotification": true,
+    "notificationDisplayTime": 1,
+    "showDisconnectNotification": true,
+    "allowInstall": false
+  },
+  {
+    "id": "0eae53bca2eb8c0c",
+    "type": "ui-theme",
+    "name": "Default Theme",
+    "colors": {
+      "surface": "#fcfcfd",
+      "primary": "#0d74ce",
+      "bgPage": "#f9f9fb",
+      "groupBg": "#ffffff",
+      "groupOutline": "#d9d9e0"
+    },
+    "sizes": {
+      "density": "default",
+      "pagePadding": "12px",
+      "groupGap": "12px",
+      "groupBorderRadius": "4px",
+      "widgetGap": "12px"
+    }
+  },
+  {
+    "id": "2c043e14008598da",
+    "type": "ui-page",
+    "name": "Page 1",
+    "ui": "af7179018e88fd23",
+    "path": "/page1",
+    "icon": "home",
+    "layout": "grid",
+    "theme": "0eae53bca2eb8c0c",
+    "breakpoints": [
+      {
+        "name": "Default",
+        "px": 0,
+        "cols": 3
+      },
+      {
+        "name": "Tablet",
+        "px": 576,
+        "cols": 6
+      },
+      {
+        "name": "Small Desktop",
+        "px": 768,
+        "cols": 9
+      },
+      {
+        "name": "Desktop",
+        "px": 1024,
+        "cols": 12
+      }
+    ],
+    "tabs": [],
+    "order": 1,
+    "className": "",
+    "visible": "true",
+    "disabled": "false"
+  },
+  {
+    "id": "e140d14cc01d32d6",
+    "type": "ui-group",
+    "name": "Group 1",
+    "page": "2c043e14008598da",
+    "width": 6,
+    "height": 1,
+    "order": 1,
+    "showTitle": true,
+    "className": "",
+    "visible": true,
+    "disabled": false,
+    "groupType": "default",
+    "tab": ""
+  },
+  {
+    "id": "ae3ffd4ee1596910",
+    "type": "ui-page",
+    "name": "Bastón Inteligente P26",
+    "ui": "af7179018e88fd23",
+    "path": "baston-p26",
+    "icon": "view-dashboard",
+    "layout": "grid",
+    "theme": "0eae53bca2eb8c0c",
+    "breakpoints": [
+      {
+        "name": "Default",
+        "px": "0",
+        "cols": "3"
+      },
+      {
+        "name": "Tablet",
+        "px": "576",
+        "cols": "6"
+      },
+      {
+        "name": "Small Desktop",
+        "px": "768",
+        "cols": "9"
+      },
+      {
+        "name": "Desktop",
+        "px": "1024",
+        "cols": "12"
+      }
+    ],
+    "tabs": [],
+    "order": 2,
+    "className": "",
+    "visible": "true",
+    "disabled": "false"
+  },
+  {
+    "id": "89fd5b543f584451",
+    "type": "ui-group",
+    "name": "Monitoreo P26",
+    "page": "ae3ffd4ee1596910",
+    "width": "6",
+    "height": "1",
+    "order": 1,
+    "showTitle": true,
+    "className": "",
+    "visible": "true",
+    "disabled": "false",
+    "groupType": "default",
+    "tab": ""
+  },
+  {
+    "id": "0ed4209b89113d7e",
+    "type": "mqtt in",
+    "z": "15452b58949459b7",
+    "name": "Datos Bastón P26",
+    "topic": "curso/E06/P26/Baston_E06",
+    "qos": "1",
+    "datatype": "utf8",
+    "broker": "b7ae4348854fbe07",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 160,
+    "wires": [
+      [
+        "d38b6b598e29eef1"
+      ]
+    ]
+  },
+  {
+    "id": "d38b6b598e29eef1",
+    "type": "json",
+    "z": "15452b58949459b7",
+    "name": "Convertir JSON",
+    "property": "payload",
+    "action": "obj",
+    "pretty": false,
+    "x": 380,
+    "y": 160,
+    "wires": [
+      [
+        "a162a35a1488b31b",
+        "cecda43f351a104b",
+        "d363d4b12fd1545f"
+      ]
+    ]
+  },
+  {
+    "id": "a162a35a1488b31b",
+    "type": "debug",
+    "z": "15452b58949459b7",
+    "name": "Datos recibidos P26",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "70575a4f2b6370d9",
+    "type": "inject",
+    "z": "15452b58949459b7",
+    "name": "ON",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "ON",
+    "payloadType": "str",
+    "x": 130,
+    "y": 420,
+    "wires": [
+      [
+        "5dc7288c9aaa2b74"
+      ]
+    ]
+  },
+  {
+    "id": "5dc7288c9aaa2b74",
+    "type": "function",
+    "z": "15452b58949459b7",
+    "name": "Armar comando P26",
+    "func": "\nconst accion = msg.payload;\n\nif (accion !== \"ON\" && accion !== \"OFF\") {\n    return null;\n}\n\nmsg.topic = \"curso/E06/P26/Baston_E06/cmd\";\nmsg.payload = { cmd: accion };\nmsg.qos = 1;\nmsg.retain = false;\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 400,
+    "y": 480,
+    "wires": [
+      [
+        "412ac3b2b3f0a55c",
+        "89f17e9b951c5d5e"
+      ]
+    ]
+  },
+  {
+    "id": "412ac3b2b3f0a55c",
+    "type": "mqtt out",
+    "z": "15452b58949459b7",
+    "name": "Comandos Bastón P26",
+    "topic": "curso/E06/P26/Baston_E06/cmd",
+    "qos": "1",
+    "retain": "false",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "b7ae4348854fbe07",
+    "x": 670,
+    "y": 460,
+    "wires": []
+  },
+  {
+    "id": "704db1462656a630",
+    "type": "inject",
+    "z": "15452b58949459b7",
+    "name": "OFF",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "OFF",
+    "payloadType": "str",
+    "x": 130,
+    "y": 560,
+    "wires": [
+      [
+        "5dc7288c9aaa2b74"
+      ]
+    ]
+  },
+  {
+    "id": "89f17e9b951c5d5e",
+    "type": "debug",
+    "z": "15452b58949459b7",
+    "name": "Prueba comandos P26",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 660,
+    "y": 520,
+    "wires": []
+  },
+  {
+    "id": "cecda43f351a104b",
+    "type": "ui-gauge",
+    "z": "15452b58949459b7",
+    "name": "Distancia P26",
+    "group": "89fd5b543f584451",
+    "order": 4,
+    "value": "payload.distancia_cm",
+    "valueType": "msg",
+    "width": 3,
+    "height": 3,
+    "gtype": "gauge-half",
+    "gstyle": "rounded",
+    "title": "Distancia detectada",
+    "alwaysShowTitle": false,
+    "floatingTitlePosition": "top-left",
+    "units": "cm",
+    "icon": "",
+    "prefix": "",
+    "suffix": "",
+    "segments": [
+      {
+        "from": "0",
+        "color": "#ea5353",
+        "text": "",
+        "textType": "value"
+      },
+      {
+        "from": "20",
+        "color": "#ffc800",
+        "text": "",
+        "textType": "value"
+      },
+      {
+        "from": "60",
+        "color": "#5cd65c",
+        "text": "",
+        "textType": "value"
+      }
+    ],
+    "min": 0,
+    "max": "400",
+    "sizeThickness": 16,
+    "sizeGap": 4,
+    "sizeKeyThickness": 8,
+    "styleRounded": true,
+    "styleGlow": false,
+    "className": "",
+    "x": 580,
+    "y": 160,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "d363d4b12fd1545f",
+    "type": "function",
+    "z": "15452b58949459b7",
+    "name": "Interpretar estado FSM",
+    "func": "\nconst estados = {\n    0: \"LIBRE\",\n    1: \"OBSTACULO_LEJOS\",\n    2: \"OBSTACULO_CERCA\",\n    3: \"ERROR_SENSOR\",\n    4: \"ACTUANDO_REMOTO\",\n    5: \"SIN_ECO\"\n};\n\nconst codigo = Number(msg.payload.estado_num);\n\nmsg.payload = estados[codigo] ?? \"ESTADO_DESCONOCIDO\";\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 590,
+    "y": 240,
+    "wires": [
+      [
+        "9a203de968344244"
+      ]
+    ]
+  },
+  {
+    "id": "9a203de968344244",
+    "type": "ui-text",
+    "z": "15452b58949459b7",
+    "group": "89fd5b543f584451",
+    "order": 3,
+    "width": 0,
+    "height": 0,
+    "name": "Estado actual P26",
+    "label": "Estado del bastón",
+    "format": "{{msg.payload}}",
+    "layout": "col-center",
+    "style": false,
+    "font": "",
+    "fontSize": 16,
+    "color": "#717171",
+    "wrapText": true,
+    "className": "",
+    "value": "payload",
+    "valueType": "msg",
+    "x": 850,
+    "y": 240,
+    "wires": []
+  },
+  {
+    "id": "c1bc96380fc1d524",
+    "type": "ui-button",
+    "z": "15452b58949459b7",
+    "group": "89fd5b543f584451",
+    "name": "Dashboard ON P26",
+    "label": "ENCENDER LED",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "emulateClick": false,
+    "tooltip": "",
+    "color": "",
+    "bgcolor": "",
+    "className": "",
+    "icon": "lightbulb",
+    "iconPosition": "left",
+    "payload": "ON",
+    "payloadType": "str",
+    "topic": "topic",
+    "topicType": "msg",
+    "buttonColor": "#2E9D59",
+    "textColor": "#FFFFFF",
+    "iconColor": "",
+    "enableClick": true,
+    "enablePointerdown": false,
+    "pointerdownPayload": "",
+    "pointerdownPayloadType": "str",
+    "enablePointerup": false,
+    "pointerupPayload": "",
+    "pointerupPayloadType": "str",
+    "x": 150,
+    "y": 380,
+    "wires": [
+      [
+        "5dc7288c9aaa2b74"
+      ]
+    ]
+  },
+  {
+    "id": "82601846686330dc",
+    "type": "ui-button",
+    "z": "15452b58949459b7",
+    "group": "89fd5b543f584451",
+    "name": "Dashboard OFF P26",
+    "label": "APAGAR LED",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "emulateClick": false,
+    "tooltip": "",
+    "color": "",
+    "bgcolor": "",
+    "className": "",
+    "icon": "lightbulb",
+    "iconPosition": "left",
+    "payload": "OFF",
+    "payloadType": "str",
+    "topic": "topic",
+    "topicType": "msg",
+    "buttonColor": "#555555",
+    "textColor": "#FFFFFF",
+    "iconColor": "",
+    "enableClick": true,
+    "enablePointerdown": false,
+    "pointerdownPayload": "",
+    "pointerdownPayloadType": "str",
+    "enablePointerup": false,
+    "pointerupPayload": "",
+    "pointerupPayloadType": "str",
+    "x": 160,
+    "y": 600,
+    "wires": [
+      [
+        "5dc7288c9aaa2b74"
+      ]
+    ]
+  }
+]
